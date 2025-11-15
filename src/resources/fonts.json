@@ -58,5 +58,29 @@
       "size": 115,
       "format": "bin",
       "target_path": "/fonts/"
+   },
+   "HarryPotter_Large" : {
+      "sources": [
+         {
+            "file": "fonts/HARRYP__.TTF",
+            "symbols": "0123456789: "
+         }
+      ],
+      "bpp": 1,
+      "size": 84,
+      "format": "bin",
+      "target_path": "/fonts/"
+   },
+   "HarryPotter_Small" : {
+      "sources": [
+         {
+            "file": "fonts/HARRYP__.TTF",
+            "symbols": "0123456789:/APMonTueWdhFriSat "
+         }
+      ],
+      "bpp": 1,
+      "size": 30,
+      "format": "bin",
+      "target_path": "/fonts/"
    }
 }

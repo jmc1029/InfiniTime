@@ -14,7 +14,7 @@
 #include "displayapp/screens/WatchFaceInfineat.h"
 #include "displayapp/screens/WatchFacePineTimeStyle.h"
 #include "displayapp/screens/WatchFaceTerminal.h"
-#include "displayapp/screens/WatchFacePrideFlag.h"
+#include "displayapp/screens/WatchFaceShire.h"
 
 namespace Pinetime {
   namespace Applications {
@@ -56,7 +56,7 @@ namespace Pinetime {
       return {CreateWatchFaceDescription<ts>()...};
     }
 
-    constexpr auto userApps = CreateAppDescriptions(UserAppTypes {});
-    constexpr auto userWatchFaces = CreateWatchFaceDescriptions(UserWatchFaceTypes {});
+    constexpr auto userApps = CreateAppDescriptions(UserAppTypes{});
+    constexpr auto userWatchFaces = CreateWatchFaceDescriptions(UserWatchFaceTypes{});
   }
 }

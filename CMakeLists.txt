@@ -25,6 +25,7 @@ endif ()
 
 if(BUILD_DFU)
   set(BUILD_DFU true)
+  #set(BUILD_RESOURCES true)
 endif()
 
 if(BUILD_RESOURCES)

@@ -1,60 +1,60 @@
 {
     "buildType": {
-      "default": "release",
-        "choices": { 
-          "debug": {
-            "short": "Debug",
-            "long": "Emit debug information without performing optimizations",
-            "buildType": "Debug"
-          },
-          "release": {
-            "short": "Release",
-            "long": "Perform optimizations",
-            "buildType": "Release"
-          }    
+        "default": "release",
+        "choices": {
+            "debug": {
+                "short": "Debug",
+                "long": "Emit debug information without performing optimizations",
+                "buildType": "Debug"
+            },
+            "release": {
+                "short": "Release",
+                "long": "Perform optimizations",
+                "buildType": "Release"
+            }
         }
     },
-    "programmer":{
+    "programmer": {
         "default": "OpenOCD",
-        "choices":{
-            "OpenOCD":{
-                "short":"OpenOCD",
+        "choices": {
+            "OpenOCD": {
+                "short": "OpenOCD",
                 "long": "Use OpenOCD",
-                "settings":{
-                    "USE_OPENOCD":1
+                "settings": {
+                    "USE_OPENOCD": 1
                 }
             },
-            "JLink":{
-                "short":"JLink",
+            "JLink": {
+                "short": "JLink",
                 "long": "Use JLink",
-                "settings":{
-                    "USE_JLINK":1
+                "settings": {
+                    "USE_JLINK": 1
                 }
             },
-            "GDB":{
-                "short":"GDB",
+            "GDB": {
+                "short": "GDB",
                 "long": "Use GDB",
-                "settings":{
-                    "USE_GDB_CLIENT":1
+                "settings": {
+                    "USE_GDB_CLIENT": 1
                 }
             }
         }
     },
     "DFU": {
         "default": "no",
-          "choices": { 
+        "choices": {
             "no": {
-              "short": "No DFU",
-              "long": "Do not build DFU",
-              "settings": {
-                  "BUILD_DFU":"0"
+                "short": "No DFU",
+                "long": "Do not build DFU",
+                "settings": {
+                    "BUILD_DFU": "0"
                 }
             },
             "yes": {
                 "short": "Build DFU",
                 "long": "Build DFU",
                 "settings": {
-                    "BUILD_DFU":"1"
+                    "BUILD_DFU": "1"
                 }
             }
         }
