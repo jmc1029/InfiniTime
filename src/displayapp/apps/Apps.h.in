@@ -49,13 +49,13 @@ namespace Pinetime {
     };
 
     enum class WatchFace : uint8_t {
-      Shire,
       Digital,
       Analog,
       PineTimeStyle,
       Terminal,
       Infineat,
       CasioStyleG7710,
+      Shire,
     };
 
     template <Apps>
