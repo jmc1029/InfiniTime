@@ -20,6 +20,7 @@ using namespace Pinetime::Applications::Screens;
 WatchFaceShire::WatchFaceShire(Controllers::DateTime& dateTimeController,
                                const Controllers::Battery& batteryController,
                                const Controllers::Ble& bleController,
+                               const Controllers::AlarmController& alarmController,
                                Controllers::NotificationManager& notificationManager,
                                Controllers::Settings& settingsController,
                                Controllers::HeartRateController& heartRateController,
@@ -33,12 +34,13 @@ WatchFaceShire::WatchFaceShire(Controllers::DateTime& dateTimeController,
     motionController{motionController},
   weatherService{weatherService},
   batteryController{batteryController},
-  bleController{bleController}{
+  bleController{bleController},
+  statusIcons(batteryController, bleController, alarmController){
 
   // Create the hobbit hole background first
   createHobbitHoleBackground();
 
-  //statusIcons.Create();
+  statusIcons.Create();
 
   // Center time display (in the upper area, above the hobbit hole)
   label_time = lv_label_create(lv_scr_act(), nullptr);
@@ -141,7 +143,7 @@ void WatchFaceShire::createHobbitHoleBackground() {
 
   // Create hobbit hole image (bottom 80px)
   shireImg = lv_img_create(lv_scr_act(), nullptr);
-  lv_img_set_src(shireImg, "F:/images/shire_img.bin");
+  lv_img_set_src(shireImg, "F:/images/shire_day.bin");  // Changed to use day resource
   lv_obj_set_pos(shireImg, 0, 160);
   lv_obj_set_click(shireImg, false);
 
@@ -157,6 +159,13 @@ void WatchFaceShire::updateSkyForWeatherAndTime() {
 
   // Determine if it's day or night
   bool isDaytime = (hour >= 6 && hour < 18);
+
+  // Update hobbit hole image based on time
+  if (isDaytime) {
+    lv_img_set_src(shireImg, "F:/images/shire_day.bin");
+  } else {
+    lv_img_set_src(shireImg, "F:/images/shire_night.bin");
+  }
 
   // Update sky color based on time and weather
   if (isDaytime) {
@@ -196,7 +205,7 @@ void WatchFaceShire::updateSkyForWeatherAndTime() {
 }
 
 void WatchFaceShire::Refresh() {
-  //statusIcons.Update();
+  statusIcons.Update();
 
   notificationState = notificationManager.AreNewNotificationsAvailable();
   if (notificationState.IsUpdated()) {
@@ -301,10 +310,12 @@ void WatchFaceShire::Refresh() {
 bool WatchFaceShire::IsAvailable(Pinetime::Controllers::FS& filesystem) {
   lfs_file file = {};
 
-  if (filesystem.FileOpen(&file, "/images/shire_img.bin", LFS_O_RDONLY) < 0) {
+  // Check for day image
+  if (filesystem.FileOpen(&file, "/images/shire_day.bin", LFS_O_RDONLY) < 0) {
     return false;
   }
 
   filesystem.FileClose(&file);
+
   return true;
 }

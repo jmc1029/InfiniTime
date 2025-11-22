@@ -26,5 +26,47 @@
       "output_format": "bin",
       "binary_format": "ARGB8565_RBSWAP",
       "target_path": "/images/"
+   },
+   "shire_day" : {
+      "sources": "images/shire_day_resource.png",
+      "color_format": "CF_TRUE_COLOR_ALPHA",
+      "output_format": "bin",
+      "binary_format": "ARGB8565_RBSWAP",
+      "target_path": "/images/"
+   },
+   "shire_night" : {
+      "sources": "images/shire_night_resource.png",
+      "color_format": "CF_TRUE_COLOR_ALPHA",
+      "output_format": "bin",
+      "binary_format": "ARGB8565_RBSWAP",
+      "target_path": "/images/"
+   },
+   "wilson_day" : {
+      "sources": "images/wilson_day.png",
+      "color_format": "CF_TRUE_COLOR_ALPHA",
+      "output_format": "bin",
+      "binary_format": "ARGB8565_RBSWAP",
+      "target_path": "/images/"
+   },
+   "wilson_sleep" : {
+      "sources": "images/wilson_sleep.png",
+      "color_format": "CF_TRUE_COLOR_ALPHA",
+      "output_format": "bin",
+      "binary_format": "ARGB8565_RBSWAP",
+      "target_path": "/images/"
+   },
+   "wilson_cold" : {
+      "sources": "images/wilson_cold.png",
+      "color_format": "CF_TRUE_COLOR_ALPHA",
+      "output_format": "bin",
+      "binary_format": "ARGB8565_RBSWAP",
+      "target_path": "/images/"
+   },
+   "wilson_raining" : {
+      "sources": "images/wilson_raining.png",
+      "color_format": "CF_TRUE_COLOR_ALPHA",
+      "output_format": "bin",
+      "binary_format": "ARGB8565_RBSWAP",
+      "target_path": "/images/"
    }
 }

@@ -1,4 +1,4 @@
-#include "displayapp/screens/WatchFaceHills.h"
+#include "displayapp/screens/WatchFacePuppies.h"
 
 #include <lvgl/lvgl.h>
 #include <cstdio>
@@ -17,9 +17,10 @@
 
 using namespace Pinetime::Applications::Screens;
 
-WatchFaceHills::WatchFaceHills(Controllers::DateTime& dateTimeController,
+WatchFacePuppies::WatchFacePuppies(Controllers::DateTime& dateTimeController,
                                const Controllers::Battery& batteryController,
                                const Controllers::Ble& bleController,
+                               const Controllers::AlarmController& alarmController,
                                Controllers::NotificationManager& notificationManager,
                                Controllers::Settings& settingsController,
                                Controllers::HeartRateController& heartRateController,
@@ -33,18 +34,19 @@ WatchFaceHills::WatchFaceHills(Controllers::DateTime& dateTimeController,
     motionController{motionController},
     weatherService{weatherService},
     batteryController{batteryController},
-    bleController{bleController}{
+    bleController{bleController},
+    statusIcons(batteryController, bleController, alarmController){
 
   // Create the rolling hills background first
   createRollingHillsBackground();
 
-  //statusIcons.Create();
+  statusIcons.Create();
 
-  // Center time display (in the upper area, above the hills)
+  // Center time display (moved down by 20px)
   label_time = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_font(label_time, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_extrabold_compressed);
   lv_obj_set_style_local_text_color(label_time, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2E4B2E)); // Dark green
-  lv_obj_align(label_time, lv_scr_act(), LV_ALIGN_CENTER, 0, -50);
+  lv_obj_align(label_time, lv_scr_act(), LV_ALIGN_CENTER, 0, -30);
 
   // AM/PM indicator below time
   label_time_ampm = lv_label_create(lv_scr_act(), nullptr);
@@ -52,11 +54,11 @@ WatchFaceHills::WatchFaceHills(Controllers::DateTime& dateTimeController,
   lv_obj_set_style_local_text_color(label_time_ampm, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2E4B2E)); // Dark green
   lv_obj_align(label_time_ampm, label_time, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
 
-  // Date above time
+  // Date above time (moved down by 20px)
   label_date = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_color(label_date, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2E4B2E)); // Dark green
   lv_obj_set_style_local_text_font(label_date, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_bold_20);
-  lv_obj_align(label_date, lv_scr_act(), LV_ALIGN_CENTER, 0, -90);
+  lv_obj_align(label_date, lv_scr_act(), LV_ALIGN_CENTER, 0, -70);
   
   // BLE icon next to date
   bleIcon = lv_label_create(lv_scr_act(), nullptr);
@@ -64,16 +66,11 @@ WatchFaceHills::WatchFaceHills(Controllers::DateTime& dateTimeController,
   lv_label_set_text_static(bleIcon, Symbols::bluetooth);
   lv_obj_align(bleIcon, label_date, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
-  // Heart rate at left side
-  heartbeatIcon = lv_label_create(lv_scr_act(), nullptr);
-  lv_label_set_text_static(heartbeatIcon, Symbols::heartBeat);
-  lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513)); // Saddle brown
-  lv_obj_align(heartbeatIcon, lv_scr_act(), LV_ALIGN_IN_BOTTOM_LEFT, 10, 0);
-
-  heartbeatValue = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(heartbeatValue, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513)); // Saddle brown
-  lv_label_set_text_static(heartbeatValue, "");
-  lv_obj_align(heartbeatValue, heartbeatIcon, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+  // Battery indicator in top right
+  //batteryIcon = lv_label_create(lv_scr_act(), nullptr);
+  //lv_obj_set_style_local_text_color(batteryIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2E4B2E)); // Dark green
+  //lv_label_set_text_static(batteryIcon, Symbols::batteryFull);
+  //lv_obj_align(batteryIcon, lv_scr_act(), LV_ALIGN_IN_TOP_RIGHT, 0, 10);
 
   // Steps at right side
   stepIcon = lv_label_create(lv_scr_act(), nullptr);
@@ -104,16 +101,23 @@ WatchFaceHills::WatchFaceHills(Controllers::DateTime& dateTimeController,
   lv_label_set_text_static(notificationIcon, NotificationIcon::GetIcon(false));
   lv_obj_align(notificationIcon, lv_scr_act(), LV_ALIGN_IN_BOTTOM_LEFT, 10, -90);
 
+  // Create Wilson the dog image (repositioned)
+  wilsonImg = lv_img_create(lv_scr_act(), nullptr);
+  lv_img_set_src(wilsonImg, "F:/images/wilson_day.bin");
+  lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);
+  lv_obj_set_click(wilsonImg, false);
+
   taskRefresh = lv_task_create(RefreshTaskCallback, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_MID, this);
   Refresh();
 }
 
-WatchFaceHills::~WatchFaceHills() {
+WatchFacePuppies::~WatchFacePuppies() {
   lv_task_del(taskRefresh);
   lv_obj_clean(lv_scr_act());
 }
 
-void WatchFaceHills::createRollingHillsBackground() {
+void WatchFacePuppies::createRollingHillsBackground() {
+  // ... (no changes in this function)
   // Create main background
   lv_obj_t* bg = lv_obj_create(lv_scr_act(), nullptr);
   lv_obj_set_size(bg, 240, 240);
@@ -200,7 +204,8 @@ void WatchFaceHills::createRollingHillsBackground() {
 }
 
 // Function to update sky based on weather and time (reused from Shire)
-void WatchFaceHills::updateSkyForWeatherAndTime() {
+void WatchFacePuppies::updateSkyForWeatherAndTime() {
+  // ... (no changes in this function)
   // Get current time and weather
   uint8_t hour = dateTimeController.Hours();
   auto weather = weatherService.Current();
@@ -236,6 +241,7 @@ void WatchFaceHills::updateSkyForWeatherAndTime() {
     lv_obj_set_style_local_text_color(weatherIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
     lv_obj_set_style_local_text_color(temperature, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
     lv_obj_set_style_local_text_color(bleIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));        // Parchment
+    lv_obj_set_style_local_text_color(batteryIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));   // Parchment
   }
 
   // Update sun/moon based on time
@@ -246,8 +252,50 @@ void WatchFaceHills::updateSkyForWeatherAndTime() {
   }
 }
 
-void WatchFaceHills::Refresh() {
-  //statusIcons.Update();
+// Function to update Wilson image based on time, weather, and temperature
+void WatchFacePuppies::updateWilsonImage() {
+  // ... (no changes in this function)
+  // Get current time, weather, and temperature
+  uint8_t hour = dateTimeController.Hours();
+  auto weather = weatherService.Current();
+  
+  // Determine if it's day or night
+  bool isDaytime = (hour >= 6 && hour < 18);
+
+  // NEW LOGIC: Check for night first, as it has the highest priority
+  if (!isDaytime) {
+    lv_img_set_src(wilsonImg, "F:/images/wilson_sleep.bin");
+    return; // No need to check weather if it's night
+  }
+
+  // It's daytime, now check weather and temperature
+  // Check if it's cold (below 40°F)
+  bool isCold = false;
+  if (weather) {
+    int16_t tempF = weather->temperature.Fahrenheit();
+    isCold = (tempF < 40);
+  }
+  
+  // Check if it's raining
+  bool isRaining = false;
+  if (weather) {
+    isRaining = (weather->iconId == static_cast<Pinetime::Controllers::SimpleWeatherService::Icons>(4) ||
+                 weather->iconId == static_cast<Pinetime::Controllers::SimpleWeatherService::Icons>(5));
+  }
+  
+  // Determine which daytime image to use
+  // Priority: Rain > Cold > Default Day
+  if (isRaining) {
+    lv_img_set_src(wilsonImg, "F:/images/wilson_raining.bin");
+  } else if (isCold) {
+    lv_img_set_src(wilsonImg, "F:/images/wilson_cold.bin");
+  } else {
+    lv_img_set_src(wilsonImg, "F:/images/wilson_day.bin");
+  }
+}
+
+void WatchFacePuppies::Refresh() {
+  statusIcons.Update();
 
   notificationState = notificationManager.AreNewNotificationsAvailable();
   if (notificationState.IsUpdated()) {
@@ -301,26 +349,16 @@ void WatchFaceHills::Refresh() {
       lv_label_set_text_static(bleIcon, BleIcon::GetIcon(bleState.Get()));
     }
 
-    batteryPercentRemaining = batteryController.PercentRemaining();
-    isCharging = batteryController.IsCharging();
+    
     
     updateSkyForWeatherAndTime();
+    updateWilsonImage();
   }
 
+  // Heart rate display logic removed
   heartbeat = heartRateController.HeartRate();
   heartbeatRunning = heartRateController.State() != Controllers::HeartRateController::States::Stopped;
-  if (heartbeat.IsUpdated() || heartbeatRunning.IsUpdated()) {
-    if (heartbeatRunning.Get()) {
-      lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513));
-      lv_label_set_text_fmt(heartbeatValue, "%d", heartbeat.Get());
-    } else {
-      lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x404040));
-      lv_label_set_text_static(heartbeatValue, "");
-    }
-
-    lv_obj_realign(heartbeatIcon);
-    lv_obj_realign(heartbeatValue);
-  }
+  // This block is now empty, but we keep the checks to prevent unnecessary updates
 
   stepCount = motionController.NbSteps();
   if (stepCount.IsUpdated()) {
@@ -347,10 +385,19 @@ void WatchFaceHills::Refresh() {
     }
     lv_obj_realign(temperature);
     lv_obj_realign(weatherIcon);
+    
+    // Update Wilson image when weather changes
+    updateWilsonImage();
   }
 }
 
-bool WatchFaceHills::IsAvailable(Pinetime::Controllers::FS& filesystem) {
-  // This watchface does not require any external assets.
+bool WatchFacePuppies::IsAvailable(Pinetime::Controllers::FS& filesystem) {
+  lfs_file file = {};
+
+  if (filesystem.FileOpen(&file, "/images/wilson_sleep.bin", LFS_O_RDONLY) < 0) {
+    return false;
+  }
+
+  filesystem.FileClose(&file);
   return true;
 }

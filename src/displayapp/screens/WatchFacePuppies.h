@@ -9,6 +9,7 @@
 #include "components/ble/BleController.h"
 #include "utility/DirtyValue.h"
 #include "displayapp/apps/Apps.h"
+#include "displayapp/widgets/StatusIcons.h"
 
 namespace Pinetime {
   namespace Controllers {
@@ -16,6 +17,7 @@ namespace Pinetime {
     class Settings;
     class Battery;
     class Ble;
+    class AlarmController;
     class NotificationManager;
     class HeartRateController;
     class MotionController;
@@ -26,17 +28,18 @@ namespace Pinetime {
   namespace Applications {
     namespace Screens {
 
-      class WatchFaceHills : public Screen {
+      class WatchFacePuppies : public Screen {
       public:
-        WatchFaceHills(Controllers::DateTime& dateTimeController,
+        WatchFacePuppies(Controllers::DateTime& dateTimeController,
                        const Controllers::Battery& batteryController,
                        const Controllers::Ble& bleController,
+                       const Controllers::AlarmController& alarmController,
                        Controllers::NotificationManager& notificationManager,
                        Controllers::Settings& settingsController,
                        Controllers::HeartRateController& heartRateController,
                        Controllers::MotionController& motionController,
                        Controllers::SimpleWeatherService& weather);
-        ~WatchFaceHills() override;
+        ~WatchFacePuppies() override;
 
         void Refresh() override;
 
@@ -52,8 +55,8 @@ namespace Pinetime {
 
         Utility::DirtyValue<std::chrono::time_point<std::chrono::system_clock, std::chrono::minutes>> currentDateTime {};
         Utility::DirtyValue<uint32_t> stepCount {};
-        Utility::DirtyValue<uint8_t> heartbeat {};
-        Utility::DirtyValue<bool> heartbeatRunning {};
+        Utility::DirtyValue<uint8_t> heartbeat {}; // Still needed for dirty check, even if not displayed
+        Utility::DirtyValue<bool> heartbeatRunning {}; // Still needed for dirty check
         Utility::DirtyValue<bool> notificationState {};
         Utility::DirtyValue<bool> bleState {};
         Utility::DirtyValue<bool> bleRadioEnabled {};
@@ -64,11 +67,12 @@ namespace Pinetime {
         Utility::DirtyValue<std::chrono::time_point<std::chrono::system_clock, std::chrono::days>> currentDate;
         
         lv_obj_t* bleIcon;
+        lv_obj_t* batteryIcon; // New battery icon
         lv_obj_t* label_time;
         lv_obj_t* label_time_ampm;
         lv_obj_t* label_date;
-        lv_obj_t* heartbeatIcon;
-        lv_obj_t* heartbeatValue;
+        // Removed: lv_obj_t* heartbeatIcon;
+        // Removed: lv_obj_t* heartbeatValue;
         lv_obj_t* stepIcon;
         lv_obj_t* stepValue;
         lv_obj_t* notificationIcon;
@@ -78,6 +82,7 @@ namespace Pinetime {
         lv_obj_t* sun;
         lv_obj_t* hillsContainer;
         lv_obj_t* hills[6]; // Array for our hill circles
+        lv_obj_t* wilsonImg; // Wilson the dog image
 
         Controllers::DateTime& dateTimeController;
         Controllers::NotificationManager& notificationManager;
@@ -89,24 +94,24 @@ namespace Pinetime {
         const Controllers::Ble& bleController;
 
         lv_task_t* taskRefresh;
-        //Widgets::StatusIcons statusIcons;
+        Widgets::StatusIcons statusIcons;
 
         void createRollingHillsBackground();
         void updateSkyForWeatherAndTime();
+        void updateWilsonImage();
       };
     }
 
-    // NOTE: You will need to add `WatchFace::Hills` to your `WatchFace` enum
-    // in a file like `displayapp/apps/Apps.h` or similar.
     template <>
-    struct WatchFaceTraits<WatchFace::Hills> {
-      static constexpr WatchFace watchFace = WatchFace::Hills;
-      static constexpr const char* name = "Hills";
+    struct WatchFaceTraits<WatchFace::Puppies> {
+      static constexpr WatchFace watchFace = WatchFace::Puppies;
+      static constexpr const char* name = "Puppies";
 
       static Screens::Screen* Create(AppControllers& controllers) {
-        return new Screens::WatchFaceHills(controllers.dateTimeController,
+        return new Screens::WatchFacePuppies(controllers.dateTimeController,
                                            controllers.batteryController,
                                            controllers.bleController,
+                                           controllers.alarmController,
                                            controllers.notificationManager,
                                            controllers.settingsController,
                                            controllers.heartRateController,
@@ -114,9 +119,9 @@ namespace Pinetime {
                                            *controllers.weatherController
                                            );
       };
+
       static bool IsAvailable(Pinetime::Controllers::FS& filesystem) {
-        //return Screens::WatchFaceHills::IsAvailable(filesystem);
-        return true;
+        return Screens::WatchFacePuppies::IsAvailable(filesystem);
       }
     };
   }

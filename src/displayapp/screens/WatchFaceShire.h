@@ -9,6 +9,7 @@
 #include "components/ble/BleController.h"
 #include "utility/DirtyValue.h"
 #include "displayapp/apps/Apps.h"
+#include "displayapp/widgets/StatusIcons.h"
 
 namespace Pinetime {
   namespace Controllers {
@@ -16,6 +17,7 @@ namespace Pinetime {
     class Settings;
     class Battery;
     class Ble;
+    class AlarmController;
     class NotificationManager;
     class HeartRateController;
     class MotionController;
@@ -31,6 +33,7 @@ namespace Pinetime {
         WatchFaceShire(Controllers::DateTime& dateTimeController,
                        const Controllers::Battery& batteryController,
                        const Controllers::Ble& bleController,
+                       const Controllers::AlarmController& alarmController,
                        Controllers::NotificationManager& notificationManager,
                        Controllers::Settings& settingsController,
                        Controllers::HeartRateController& heartRateController,
@@ -88,7 +91,7 @@ namespace Pinetime {
   const Controllers::Ble& bleController;
 
         lv_task_t* taskRefresh;
-        //Widgets::StatusIcons statusIcons;
+        Widgets::StatusIcons statusIcons;
 
         void createHobbitHoleBackground();
         void updateSkyForWeatherAndTime();
@@ -104,6 +107,7 @@ namespace Pinetime {
         return new Screens::WatchFaceShire(controllers.dateTimeController,
                                            controllers.batteryController,
                                            controllers.bleController,
+                                           controllers.alarmController,
                                            controllers.notificationManager,
                                            controllers.settingsController,
                                            controllers.heartRateController,
