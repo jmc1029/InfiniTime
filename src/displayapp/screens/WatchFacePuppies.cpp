@@ -241,7 +241,7 @@ void WatchFacePuppies::updateSkyForWeatherAndTime() {
     lv_obj_set_style_local_text_color(weatherIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
     lv_obj_set_style_local_text_color(temperature, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
     lv_obj_set_style_local_text_color(bleIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));        // Parchment
-    lv_obj_set_style_local_text_color(batteryIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));   // Parchment
+//    lv_obj_set_style_local_text_color(batteryIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));   // Parchment
   }
 
   // Update sun/moon based on time
@@ -265,6 +265,8 @@ void WatchFacePuppies::updateWilsonImage() {
   // NEW LOGIC: Check for night first, as it has the highest priority
   if (!isDaytime) {
     lv_img_set_src(wilsonImg, "F:/images/wilson_sleep.bin");
+    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, -10, 0);
+    
     return; // No need to check weather if it's night
   }
 
@@ -287,10 +289,13 @@ void WatchFacePuppies::updateWilsonImage() {
   // Priority: Rain > Cold > Default Day
   if (isRaining) {
     lv_img_set_src(wilsonImg, "F:/images/wilson_raining.bin");
+    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);
   } else if (isCold) {
     lv_img_set_src(wilsonImg, "F:/images/wilson_cold.bin");
+    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);
   } else {
     lv_img_set_src(wilsonImg, "F:/images/wilson_day.bin");
+    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);
   }
 }
 

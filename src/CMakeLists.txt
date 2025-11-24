@@ -430,6 +430,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/WatchFacePineTimeStyle.cpp
         displayapp/screens/WatchFaceCasioStyleG7710.cpp
         displayapp/screens/WatchFaceShire.cpp
+        displayapp/screens/WatchFacePuppies.cpp
 
         ##
 
