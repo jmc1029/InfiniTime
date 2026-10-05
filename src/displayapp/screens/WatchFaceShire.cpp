@@ -26,16 +26,16 @@ WatchFaceShire::WatchFaceShire(Controllers::DateTime& dateTimeController,
                                Controllers::HeartRateController& heartRateController,
                                Controllers::MotionController& motionController,
                                Controllers::SimpleWeatherService& weatherService)
-  : currentDateTime{{}},
-    dateTimeController{dateTimeController},
-    notificationManager{notificationManager},
-    settingsController{settingsController},
-    heartRateController{heartRateController},
-    motionController{motionController},
-  weatherService{weatherService},
-  batteryController{batteryController},
-  bleController{bleController},
-  statusIcons(batteryController, bleController, alarmController){
+  : currentDateTime {{}},
+    dateTimeController {dateTimeController},
+    notificationManager {notificationManager},
+    settingsController {settingsController},
+    heartRateController {heartRateController},
+    motionController {motionController},
+    weatherService {weatherService},
+    batteryController {batteryController},
+    bleController {bleController},
+    statusIcons(batteryController, bleController, alarmController) {
 
   // Create the hobbit hole background first
   createHobbitHoleBackground();
@@ -61,15 +61,15 @@ WatchFaceShire::WatchFaceShire(Controllers::DateTime& dateTimeController,
   lv_obj_align(label_date, lv_scr_act(), LV_ALIGN_CENTER, 0, -70);
 
   // Heart rate at left side
-  //heartbeatIcon = lv_label_create(lv_scr_act(), nullptr);
-  //lv_label_set_text_static(heartbeatIcon, Symbols::heartBeat);
-  //lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513)); // Saddle brown
-  //lv_obj_align(heartbeatIcon, lv_scr_act(), LV_ALIGN_IN_BOTTOM_LEFT, 10, 0);
+  // heartbeatIcon = lv_label_create(lv_scr_act(), nullptr);
+  // lv_label_set_text_static(heartbeatIcon, Symbols::heartBeat);
+  // lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513)); // Saddle brown
+  // lv_obj_align(heartbeatIcon, lv_scr_act(), LV_ALIGN_IN_BOTTOM_LEFT, 10, 0);
 
-  //heartbeatValue = lv_label_create(lv_scr_act(), nullptr);
-  //lv_obj_set_style_local_text_color(heartbeatValue, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513)); // Saddle brown
-  //lv_label_set_text_static(heartbeatValue, "");
-  //lv_obj_align(heartbeatValue, heartbeatIcon, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+  // heartbeatValue = lv_label_create(lv_scr_act(), nullptr);
+  // lv_obj_set_style_local_text_color(heartbeatValue, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513)); // Saddle brown
+  // lv_label_set_text_static(heartbeatValue, "");
+  // lv_obj_align(heartbeatValue, heartbeatIcon, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
   // Steps at Left bottom
   stepIcon = lv_label_create(lv_scr_act(), nullptr);
@@ -103,7 +103,7 @@ WatchFaceShire::WatchFaceShire(Controllers::DateTime& dateTimeController,
   bleIcon = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_color(bleIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2E4B2E));
   lv_label_set_text_static(bleIcon, Symbols::bluetooth);
-  //lv_obj_align(bleIcon, dateContainer, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
+  // lv_obj_align(bleIcon, dateContainer, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
 
   taskRefresh = lv_task_create(RefreshTaskCallback, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_MID, this);
   Refresh();
@@ -143,7 +143,7 @@ void WatchFaceShire::createHobbitHoleBackground() {
 
   // Create hobbit hole image (bottom 80px)
   shireImg = lv_img_create(lv_scr_act(), nullptr);
-  lv_img_set_src(shireImg, "F:/images/shire_day.bin");  // Changed to use day resource
+  lv_img_set_src(shireImg, "F:/images/shire_day.bin"); // Changed to use day resource
   lv_obj_set_pos(shireImg, 0, 160);
   lv_obj_set_click(shireImg, false);
 
@@ -194,11 +194,10 @@ void WatchFaceShire::updateSkyForWeatherAndTime() {
     lv_obj_set_style_local_text_color(label_date, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));      // Parchment
     lv_obj_set_style_local_text_color(weatherIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
     lv_obj_set_style_local_text_color(temperature, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
-    lv_obj_set_style_local_text_color(stepIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
-    lv_obj_set_style_local_text_color(stepValue, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
+    lv_obj_set_style_local_text_color(stepIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));        // Parchment
+    lv_obj_set_style_local_text_color(stepValue, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));       // Parchment
     lv_obj_align(stepValue, lv_scr_act(), LV_ALIGN_IN_TOP_MID, 0, 0);
     lv_obj_align(stepIcon, stepValue, LV_ALIGN_IN_RIGHT_MID, 25, 0);
-    
   }
 
   // Update sun/moon based on time
@@ -265,20 +264,20 @@ void WatchFaceShire::Refresh() {
 
     batteryPercentRemaining = batteryController.PercentRemaining();
     isCharging = batteryController.IsCharging();
-    
+
     updateSkyForWeatherAndTime();
   }
 
-  //heartbeat = heartRateController.HeartRate();
-  //heartbeatRunning = heartRateController.State() != Controllers::HeartRateController::States::Stopped;
-  //if (heartbeat.IsUpdated() || heartbeatRunning.IsUpdated()) {
-  //  if (heartbeatRunning.Get()) {
-  //    lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513));
-  //    lv_label_set_text_fmt(heartbeatValue, "%d", heartbeat.Get());
-  //  } else {
-  //    lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x404040));
-  //    lv_label_set_text_static(heartbeatValue, "");
-  //  }
+  // heartbeat = heartRateController.HeartRate();
+  // heartbeatRunning = heartRateController.State() != Controllers::HeartRateController::States::Stopped;
+  // if (heartbeat.IsUpdated() || heartbeatRunning.IsUpdated()) {
+  //   if (heartbeatRunning.Get()) {
+  //     lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x8B4513));
+  //     lv_label_set_text_fmt(heartbeatValue, "%d", heartbeat.Get());
+  //   } else {
+  //     lv_obj_set_style_local_text_color(heartbeatIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x404040));
+  //     lv_label_set_text_static(heartbeatValue, "");
+  //   }
 
   //  lv_obj_realign(heartbeatIcon);
   //  lv_obj_realign(heartbeatValue);
@@ -302,7 +301,7 @@ void WatchFaceShire::Refresh() {
         tempUnit = 'F';
       }
       lv_label_set_text_fmt(temperature, "%d°%c", temp, tempUnit);
-      lv_label_set_text(weatherIcon, Symbols::GetSymbol(optCurrentWeather->iconId));
+      lv_label_set_text(weatherIcon, Symbols::GetSymbol(optCurrentWeather->iconId, weatherService.IsNight()));
     } else {
       lv_label_set_text_static(temperature, "");
       lv_label_set_text(weatherIcon, "");

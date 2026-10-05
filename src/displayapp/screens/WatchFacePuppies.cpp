@@ -18,24 +18,24 @@
 using namespace Pinetime::Applications::Screens;
 
 WatchFacePuppies::WatchFacePuppies(Controllers::DateTime& dateTimeController,
-                               const Controllers::Battery& batteryController,
-                               const Controllers::Ble& bleController,
-                               const Controllers::AlarmController& alarmController,
-                               Controllers::NotificationManager& notificationManager,
-                               Controllers::Settings& settingsController,
-                               Controllers::HeartRateController& heartRateController,
-                               Controllers::MotionController& motionController,
-                               Controllers::SimpleWeatherService& weatherService)
-  : currentDateTime{{}},
-    dateTimeController{dateTimeController},
-    notificationManager{notificationManager},
-    settingsController{settingsController},
-    heartRateController{heartRateController},
-    motionController{motionController},
-    weatherService{weatherService},
-    batteryController{batteryController},
-    bleController{bleController},
-    statusIcons(batteryController, bleController, alarmController){
+                                   const Controllers::Battery& batteryController,
+                                   const Controllers::Ble& bleController,
+                                   const Controllers::AlarmController& alarmController,
+                                   Controllers::NotificationManager& notificationManager,
+                                   Controllers::Settings& settingsController,
+                                   Controllers::HeartRateController& heartRateController,
+                                   Controllers::MotionController& motionController,
+                                   Controllers::SimpleWeatherService& weatherService)
+  : currentDateTime {{}},
+    dateTimeController {dateTimeController},
+    notificationManager {notificationManager},
+    settingsController {settingsController},
+    heartRateController {heartRateController},
+    motionController {motionController},
+    weatherService {weatherService},
+    batteryController {batteryController},
+    bleController {bleController},
+    statusIcons(batteryController, bleController, alarmController) {
 
   // Create the rolling hills background first
   createRollingHillsBackground();
@@ -59,13 +59,12 @@ WatchFacePuppies::WatchFacePuppies(Controllers::DateTime& dateTimeController,
   lv_obj_set_style_local_text_color(label_date, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2E4B2E)); // Dark green
   lv_obj_set_style_local_text_font(label_date, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_bold_20);
   lv_obj_align(label_date, lv_scr_act(), LV_ALIGN_CENTER, 0, -70);
-  
+
   // BLE icon next to date
   bleIcon = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_color(bleIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2E4B2E));
   lv_label_set_text_static(bleIcon, Symbols::bluetooth);
   lv_obj_align(bleIcon, label_date, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
-
 
   // Steps at right side
   stepIcon = lv_label_create(lv_scr_act(), nullptr);
@@ -151,7 +150,7 @@ void WatchFacePuppies::createRollingHillsBackground() {
   lv_obj_set_style_local_border_width(hills[0], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_radius(hills[0], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
   lv_obj_set_click(hills[0], false);
-  
+
   hills[1] = lv_obj_create(lv_scr_act(), nullptr);
   lv_obj_set_size(hills[1], 180, 100);
   lv_obj_set_pos(hills[1], 70, 160);
@@ -159,7 +158,7 @@ void WatchFacePuppies::createRollingHillsBackground() {
   lv_obj_set_style_local_border_width(hills[1], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_radius(hills[1], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
   lv_obj_set_click(hills[1], false);
-  
+
   // Middle hills (medium green)
   hills[2] = lv_obj_create(lv_scr_act(), nullptr);
   lv_obj_set_size(hills[2], 150, 90);
@@ -168,7 +167,7 @@ void WatchFacePuppies::createRollingHillsBackground() {
   lv_obj_set_style_local_border_width(hills[2], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_radius(hills[2], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
   lv_obj_set_click(hills[2], false);
-  
+
   hills[3] = lv_obj_create(lv_scr_act(), nullptr);
   lv_obj_set_size(hills[3], 160, 95);
   lv_obj_set_pos(hills[3], 100, 175);
@@ -176,7 +175,7 @@ void WatchFacePuppies::createRollingHillsBackground() {
   lv_obj_set_style_local_border_width(hills[3], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_radius(hills[3], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
   lv_obj_set_click(hills[3], false);
-  
+
   // Front hills (darker green)
   hills[4] = lv_obj_create(lv_scr_act(), nullptr);
   lv_obj_set_size(hills[4], 140, 80);
@@ -185,7 +184,7 @@ void WatchFacePuppies::createRollingHillsBackground() {
   lv_obj_set_style_local_border_width(hills[4], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_radius(hills[4], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
   lv_obj_set_click(hills[4], false);
-  
+
   hills[5] = lv_obj_create(lv_scr_act(), nullptr);
   lv_obj_set_size(hills[5], 120, 70);
   lv_obj_set_pos(hills[5], 140, 195);
@@ -193,7 +192,7 @@ void WatchFacePuppies::createRollingHillsBackground() {
   lv_obj_set_style_local_border_width(hills[5], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
   lv_obj_set_style_local_radius(hills[5], LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
   lv_obj_set_click(hills[5], false);
-  
+
   // Move the background to the back
   lv_obj_move_background(bg);
 }
@@ -233,10 +232,10 @@ void WatchFacePuppies::updateSkyForWeatherAndTime() {
       lv_obj_set_style_local_bg_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x708090));              // Slate gray
       lv_obj_set_style_local_bg_grad_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2F4F4F));         // Dark slate gray
       isRaining = true;
-      lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);         
-    } else {                                                                                                         // Default daytime
-      lv_obj_set_style_local_bg_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x87CEEB));              // Sky blue
-      lv_obj_set_style_local_bg_grad_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xB8E6B8));         // Light green
+      lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);
+    } else {                                                                                                 // Default daytime
+      lv_obj_set_style_local_bg_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x87CEEB));      // Sky blue
+      lv_obj_set_style_local_bg_grad_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xB8E6B8)); // Light green
     }
   } else {                                                                                                 // Nighttime
     lv_obj_set_style_local_bg_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x191970));      // Midnight blue
@@ -248,15 +247,19 @@ void WatchFacePuppies::updateSkyForWeatherAndTime() {
     lv_obj_set_style_local_text_color(label_date, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));      // Parchment
     lv_obj_set_style_local_text_color(weatherIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
     lv_obj_set_style_local_text_color(temperature, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
-    lv_obj_set_style_local_text_color(bleIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));        // Parchment
+    lv_obj_set_style_local_text_color(bleIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));         // Parchment
   }
 
   // Update sun/moon based on time
   if (isDaytime) {
     lv_obj_set_style_local_bg_color(sun, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xFFD700)); // Gold
-    if(isRaining){lv_img_set_src(wilsonImg, "F:/images/wilson_raining.bin");}
-    else if(isCold){lv_img_set_src(wilsonImg, "F:/images/wilson_cold.bin");}
-    else{lv_img_set_src(wilsonImg, "F:/images/wilson_day.bin");}
+    if (isRaining) {
+      lv_img_set_src(wilsonImg, "F:/images/wilson_raining.bin");
+    } else if (isCold) {
+      lv_img_set_src(wilsonImg, "F:/images/wilson_cold.bin");
+    } else {
+      lv_img_set_src(wilsonImg, "F:/images/wilson_day.bin");
+    }
     lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, -10, 0);
   } else {
     lv_obj_set_style_local_bg_color(sun, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xF0F0F0)); // Light silver (moon)
@@ -264,6 +267,7 @@ void WatchFacePuppies::updateSkyForWeatherAndTime() {
     lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_LEFT, 10, 0);
   }
 }
+
 void WatchFacePuppies::Refresh() {
   statusIcons.Update();
 
@@ -340,14 +344,13 @@ void WatchFacePuppies::Refresh() {
         tempUnit = 'F';
       }
       lv_label_set_text_fmt(temperature, "%d°%c", temp, tempUnit);
-      lv_label_set_text(weatherIcon, Symbols::GetSymbol(optCurrentWeather->iconId));
+      lv_label_set_text(weatherIcon, Symbols::GetSymbol(optCurrentWeather->iconId, weatherService.IsNight()));
     } else {
       lv_label_set_text_static(temperature, "");
       lv_label_set_text(weatherIcon, "");
     }
     lv_obj_realign(temperature);
     lv_obj_realign(weatherIcon);
-    
   }
 }
 
