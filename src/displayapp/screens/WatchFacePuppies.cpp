@@ -66,11 +66,6 @@ WatchFacePuppies::WatchFacePuppies(Controllers::DateTime& dateTimeController,
   lv_label_set_text_static(bleIcon, Symbols::bluetooth);
   lv_obj_align(bleIcon, label_date, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
 
-  // Battery indicator in top right
-  //batteryIcon = lv_label_create(lv_scr_act(), nullptr);
-  //lv_obj_set_style_local_text_color(batteryIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2E4B2E)); // Dark green
-  //lv_label_set_text_static(batteryIcon, Symbols::batteryFull);
-  //lv_obj_align(batteryIcon, lv_scr_act(), LV_ALIGN_IN_TOP_RIGHT, 0, 10);
 
   // Steps at right side
   stepIcon = lv_label_create(lv_scr_act(), nullptr);
@@ -203,15 +198,26 @@ void WatchFacePuppies::createRollingHillsBackground() {
   lv_obj_move_background(bg);
 }
 
-// Function to update sky based on weather and time (reused from Shire)
+// Function to update sky based on weather and time
 void WatchFacePuppies::updateSkyForWeatherAndTime() {
-  // ... (no changes in this function)
   // Get current time and weather
   uint8_t hour = dateTimeController.Hours();
   auto weather = weatherService.Current();
 
   // Determine if it's day or night
   bool isDaytime = (hour >= 6 && hour < 18);
+
+  // Reset raining state
+  bool isRaining = false;
+
+  // Reset cold weather state
+  bool isCold = false;
+  if (weather) {
+    int16_t tempF = weather->temperature.Fahrenheit();
+    if (tempF <= 40) { // 40°F or below is considered cold
+      isCold = true;
+    }
+  }
 
   // Update sky color based on time and weather
   if (isDaytime) {
@@ -226,6 +232,8 @@ void WatchFacePuppies::updateSkyForWeatherAndTime() {
                            weather->iconId == static_cast<Pinetime::Controllers::SimpleWeatherService::Icons>(5))) { // Rainy
       lv_obj_set_style_local_bg_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x708090));              // Slate gray
       lv_obj_set_style_local_bg_grad_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x2F4F4F));         // Dark slate gray
+      isRaining = true;
+      lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);         
     } else {                                                                                                         // Default daytime
       lv_obj_set_style_local_bg_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x87CEEB));              // Sky blue
       lv_obj_set_style_local_bg_grad_color(sky, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xB8E6B8));         // Light green
@@ -241,64 +249,21 @@ void WatchFacePuppies::updateSkyForWeatherAndTime() {
     lv_obj_set_style_local_text_color(weatherIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
     lv_obj_set_style_local_text_color(temperature, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));     // Parchment
     lv_obj_set_style_local_text_color(bleIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));        // Parchment
-//    lv_obj_set_style_local_text_color(batteryIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xe4d3a0));   // Parchment
   }
 
   // Update sun/moon based on time
   if (isDaytime) {
     lv_obj_set_style_local_bg_color(sun, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xFFD700)); // Gold
+    if(isRaining){lv_img_set_src(wilsonImg, "F:/images/wilson_raining.bin");}
+    else if(isCold){lv_img_set_src(wilsonImg, "F:/images/wilson_cold.bin");}
+    else{lv_img_set_src(wilsonImg, "F:/images/wilson_day.bin");}
+    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, -10, 0);
   } else {
     lv_obj_set_style_local_bg_color(sun, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0xF0F0F0)); // Light silver (moon)
-  }
-}
-
-// Function to update Wilson image based on time, weather, and temperature
-void WatchFacePuppies::updateWilsonImage() {
-  // ... (no changes in this function)
-  // Get current time, weather, and temperature
-  uint8_t hour = dateTimeController.Hours();
-  auto weather = weatherService.Current();
-  
-  // Determine if it's day or night
-  bool isDaytime = (hour >= 6 && hour < 18);
-
-  // NEW LOGIC: Check for night first, as it has the highest priority
-  if (!isDaytime) {
     lv_img_set_src(wilsonImg, "F:/images/wilson_sleep.bin");
-    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, -10, 0);
-    
-    return; // No need to check weather if it's night
-  }
-
-  // It's daytime, now check weather and temperature
-  // Check if it's cold (below 40°F)
-  bool isCold = false;
-  if (weather) {
-    int16_t tempF = weather->temperature.Fahrenheit();
-    isCold = (tempF < 40);
-  }
-  
-  // Check if it's raining
-  bool isRaining = false;
-  if (weather) {
-    isRaining = (weather->iconId == static_cast<Pinetime::Controllers::SimpleWeatherService::Icons>(4) ||
-                 weather->iconId == static_cast<Pinetime::Controllers::SimpleWeatherService::Icons>(5));
-  }
-  
-  // Determine which daytime image to use
-  // Priority: Rain > Cold > Default Day
-  if (isRaining) {
-    lv_img_set_src(wilsonImg, "F:/images/wilson_raining.bin");
-    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);
-  } else if (isCold) {
-    lv_img_set_src(wilsonImg, "F:/images/wilson_cold.bin");
-    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);
-  } else {
-    lv_img_set_src(wilsonImg, "F:/images/wilson_day.bin");
-    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_MID, 0, -15);
+    lv_obj_align(wilsonImg, lv_scr_act(), LV_ALIGN_IN_BOTTOM_LEFT, 10, 0);
   }
 }
-
 void WatchFacePuppies::Refresh() {
   statusIcons.Update();
 
@@ -354,16 +319,8 @@ void WatchFacePuppies::Refresh() {
       lv_label_set_text_static(bleIcon, BleIcon::GetIcon(bleState.Get()));
     }
 
-    
-    
     updateSkyForWeatherAndTime();
-    updateWilsonImage();
   }
-
-  // Heart rate display logic removed
-  heartbeat = heartRateController.HeartRate();
-  heartbeatRunning = heartRateController.State() != Controllers::HeartRateController::States::Stopped;
-  // This block is now empty, but we keep the checks to prevent unnecessary updates
 
   stepCount = motionController.NbSteps();
   if (stepCount.IsUpdated()) {
@@ -391,8 +348,6 @@ void WatchFacePuppies::Refresh() {
     lv_obj_realign(temperature);
     lv_obj_realign(weatherIcon);
     
-    // Update Wilson image when weather changes
-    updateWilsonImage();
   }
 }
 
